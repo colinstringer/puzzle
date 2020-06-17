@@ -12,8 +12,8 @@ import Logo_c1 from "../../images/Logo_c1.png";
 import Logo_c2 from "../../images/Logo_c2.png";
 
 function Grid() {
-  const [gameOver, setGameOver] = useState(false);
-  const [amountOfRandomMoves, setAmountOfRandomMoves] = useState(300);
+  const [gameState, setGameState] = useState("start");
+  const [amountOfRandomMoves, setAmountOfRandomMoves] = useState(0);
 
   const pic1 = <img src={Logo_a1} id="0" width="200px" alt="pic1" />;
   const pic2 = <img src={Logo_a2} id="1" width="200px" alt="pic2" />;
@@ -69,7 +69,7 @@ function Grid() {
   function findIndexFromId(id) {
     let index;
     picArray.map((pic, i) => {
-      if (pic.props.id == id) {
+      if (parseInt(pic.props.id) === id) {
         return (index = i);
       }
       return null;
@@ -89,13 +89,13 @@ function Grid() {
     const randomNeighbour = neighbours[emptySlotIndex][randomIndex];
 
     swapElementsByIndex(emptySlotIndex, randomNeighbour);
-    setAmountOfRandomMoves(amountOfRandomMoves - 1);
+    setAmountOfRandomMoves(amountOfRandomMoves + 1);
   }
 
   function gameIsComplete() {
     let correctSlots = 0;
     for (let i = 0; i < 9; i++) {
-      if (picArray[i].props.id == i) {
+      if (parseInt(picArray[i].props.id) === i) {
         correctSlots++;
       }
     }
@@ -105,61 +105,86 @@ function Grid() {
   }
 
   function handleClick(event) {
-    if (!gameOver) {
+    if (gameState === "playing") {
       if (event.target.id !== 8) {
-        const clickedSlotIndex = findIndexFromId(event.target.id);
+        const clickedSlotIndex = findIndexFromId(parseInt(event.target.id));
         const emptySlotIndex = findIndexFromId(8);
 
-        if (areNeighbours(clickedSlotIndex, parseInt(emptySlotIndex))) {
-          swapElementsByIndex(clickedSlotIndex, emptySlotIndex);
+        if (
+          areNeighbours(parseInt(clickedSlotIndex), parseInt(emptySlotIndex))
+        ) {
+          swapElementsByIndex(
+            parseInt(clickedSlotIndex),
+            parseInt(emptySlotIndex)
+          );
         }
       }
     }
   }
 
-  useEffect(() => {
-    if (amountOfRandomMoves > 0) {
-      setTimeout(moveRandomSlot, 3);
-    }
-  }, [amountOfRandomMoves]);
+  function shuffle() {
+    setAmountOfRandomMoves(0);
+    setGameState("shuffling");
+  }
 
   useEffect(() => {
-    if (picArray.length === 9 && amountOfRandomMoves <= 0) {
+    if (gameState === "shuffling") {
+      const emptySlotIndex = findIndexFromId(8);
+      if (amountOfRandomMoves > 300 && parseInt(emptySlotIndex) === 8) {
+        setGameState("playing");
+        setAmountOfRandomMoves(0);
+      } else {
+        setTimeout(moveRandomSlot, 3);
+      }
+    }
+  }, [amountOfRandomMoves, gameState]);
+
+  useEffect(() => {
+    if (
+      picArray.length === 9 &&
+      amountOfRandomMoves <= 0 &&
+      gameState === "playing"
+    ) {
       if (gameIsComplete()) {
-        setGameOver(true);
+        setGameState("start");
         alert("Congratulations!! You win!");
       }
     }
-  }, [picArray]);
+  }, [picArray, amountOfRandomMoves]);
 
   return (
-    <div className="grid">
-      <div className="a1" onClick={handleClick}>
-        {picArray[0]}
+    <div className="player-grid">
+      <div className="shuffle">
+        <button onClick={shuffle}>Shuffle</button>
       </div>
-      <div className="a2" onClick={handleClick}>
-        {picArray[1]}
-      </div>
-      <div className="a3" onClick={handleClick}>
-        {picArray[2]}
-      </div>
-      <div className="b1" onClick={handleClick}>
-        {picArray[3]}
-      </div>
-      <div className="b2" onClick={handleClick}>
-        {picArray[4]}
-      </div>
-      <div className="b3" onClick={handleClick}>
-        {picArray[5]}
-      </div>
-      <div className="c1" onClick={handleClick}>
-        {picArray[6]}
-      </div>
-      <div className="c2" onClick={handleClick}>
-        {picArray[7]}
-      </div>
-      <div className="c3" onClick={handleClick}>
-        {picArray[8]}
+      <div className="player-game">
+        <div className="a1" onClick={handleClick}>
+          {picArray[0]}
+        </div>
+        <div className="a2" onClick={handleClick}>
+          {picArray[1]}
+        </div>
+        <div className="a3" onClick={handleClick}>
+          {picArray[2]}
+        </div>
+        <div className="b1" onClick={handleClick}>
+          {picArray[3]}
+        </div>
+        <div className="b2" onClick={handleClick}>
+          {picArray[4]}
+        </div>
+        <div className="b3" onClick={handleClick}>
+          {picArray[5]}
+        </div>
+        <div className="c1" onClick={handleClick}>
+          {picArray[6]}
+        </div>
+        <div className="c2" onClick={handleClick}>
+          {picArray[7]}
+        </div>
+        <div className="c3" onClick={handleClick}>
+          {picArray[8]}
+        </div>
       </div>
     </div>
   );
