@@ -1,11 +1,19 @@
 .App {
-  text-align: center;
+  display: grid;
+  grid-template-areas: "player computer";
+  grid-template-columns: 1fr 1fr;
+
+  min-height: 100vh;
+  padding: 100px;
 
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   color: white;
+}
+
+.player {
+  grid-area: player;
+}
+
+.computer {
+  grid-area: computer;
 }

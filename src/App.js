@@ -1,11 +1,17 @@
-import './App.css';
-import React from 'react';
-import Grid from './components/Grid';
+import "./App.css";
+import React from "react";
+import PlayerGrid from "./components/PlayerGrid";
+import ComputerGrid from "./components/ComputerGrid";
 
 function App() {
   return (
     <div className="App">
-      <Grid />
+      <div className="player">
+        <PlayerGrid />
+      </div>
+      <div className="computer">
+        <ComputerGrid />
+      </div>
     </div>
   );
 }

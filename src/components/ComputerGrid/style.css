@@ -1,14 +1,14 @@
-.player-grid {
+.computer-grid {
   display: grid;
   grid-template-areas: "shuffle game";
   grid-template-columns: 1fr 3fr;
 }
 
-.shuffle {
+.computer-grid .shuffle {
   grid-area: shuffle;
 }
 
-.shuffle button {
+.computer-grid .shuffle button {
   padding: 20px;
   background-color: #06375C;
   border: 3px black solid;
@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-.player-game {
+.computer-game {
   grid-area: game;
 
   display: grid;
@@ -32,45 +32,43 @@
     "c1 c2 c3";
   grid-template-columns: 1fr 1fr 1fr;
   gap: 5px;
+
+  width: 460px;
   border: 2px white solid;
 }
 
-.player-game img {
-  cursor: pointer;
-}
-
-.a1 {
+.computer-grid .a1 {
   grid-area: a1;
 }
 
-.a2 {
+.computer-grid .a2 {
   grid-area: a2;
 }
 
-.a3 {
+.computer-grid .a3 {
   grid-area: a3;
 }
 
-.b1 {
+.computer-grid .b1 {
   grid-area: b1;
 }
 
-.b2 {
+.computer-grid .b2 {
   grid-area: b2;
 }
 
-.b3 {
+.computer-grid .b3 {
   grid-area: b3;
 }
 
-.c1 {
+.computer-grid .c1 {
   grid-area: c1;
 }
 
-.c2 {
+.computer-grid .c2 {
   grid-area: c2;
 }
 
-.c3 {
+.computer-grid .c3 {
   grid-area: c3;
 }
