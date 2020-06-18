@@ -1,6 +1,9 @@
 import "./style.css";
 import React, { useState, useEffect } from "react";
 
+import { useDispatch, useSelector } from "react-redux";
+import { selectGlobalGameState } from "../../store/appState/selectors";
+
 import Logo from "../../images/3x3/Logo_3x3.png";
 import Logo_a1 from "../../images/3x3/Logo_a1_3x3.png";
 import Logo_a2 from "../../images/3x3/Logo_a2_3x3.png";
@@ -10,12 +13,17 @@ import Logo_b2 from "../../images/3x3/Logo_b2_3x3.png";
 import Logo_b3 from "../../images/3x3/Logo_b3_3x3.png";
 import Logo_c1 from "../../images/3x3/Logo_c1_3x3.png";
 import Logo_c2 from "../../images/3x3/Logo_c2_3x3.png";
+import { setGlobalGameState } from "../../store/appState/actions";
 
 function ComputerGrid() {
+  const dispatch = useDispatch();
+
   const [gameState, setGameState] = useState("start");
   const [amountOfRandomMoves, setAmountOfRandomMoves] = useState(0);
   const [instructions, setInstructions] = useState([]);
   const [phase, setPhase] = useState("0");
+
+  const globalGameState = useSelector(selectGlobalGameState);
 
   const pic1 = <img src={Logo_a1} id="0" width="150px" alt="pic1" />;
   const pic2 = <img src={Logo_a2} id="1" width="150px" alt="pic2" />;
@@ -71,10 +79,8 @@ function ComputerGrid() {
       setGameState("finished");
     }
     if (gameState === "finished") {
-      setGameState("start");
-      setInstructions([]);
-      setPhase(0);
       alert("The computer wins!!");
+      refreshPage();
     }
   }, [gameState]);
 
@@ -145,10 +151,18 @@ function ComputerGrid() {
       }
   }, [instructions, phase]);
 
+  // phase 1 ends when the upper left pic is in its original slot
   function phase1a() {
-    const picUpLeft = parseInt(findIndexFromId(0));
-    if (picUpLeft === 4) setPhase("1b");
-    else if (picUpLeft === 0) setPhase("2a");
+    const picUpperLeft = parseInt(findIndexFromId(0));
+
+    // the array grid positions are as follows:
+    // 0 1 2
+    // 3 4 5
+    // 6 7 8
+    // so picUpperLeft is the picture that has its original position in the 0 slot
+
+    if (picUpperLeft === 4) setPhase("1b");
+    else if (picUpperLeft === 0) setPhase("2a");
     else setPhase("1c");
   }
 
@@ -175,6 +189,7 @@ function ComputerGrid() {
       ]);
   }
 
+  // phase 2 ends when the upper center pic is in the bottom left corner
   function phase2a() {
     const picUpperCenter = parseInt(findIndexFromId(1));
     const picUpperRight = parseInt(findIndexFromId(2));
@@ -205,6 +220,7 @@ function ComputerGrid() {
     }
   }
 
+  // phase 3 ends when the upper right pic is in slot 1
   function phase3a() {
     const picUpperRight = parseInt(findIndexFromId(2));
     const picUpperCenter = parseInt(findIndexFromId(1));
@@ -236,6 +252,7 @@ function ComputerGrid() {
     }
   }
 
+  // phase 4 ends when the 3 upper layer pics are in their original slots
   function phase4a() {
     const picUpperCenter = parseInt(findIndexFromId(1));
     if (picUpperCenter === 4) {
@@ -250,6 +267,7 @@ function ComputerGrid() {
     setPhase("5a");
   }
 
+  // phase 5 ends when the 3 left pics are in their original slots
   function phase5a() {
     const picLeftCenter = parseInt(findIndexFromId(3));
     const picLowerLeft = parseInt(findIndexFromId(6));
@@ -340,7 +358,8 @@ function ComputerGrid() {
     const emptySlotIndex = parseInt(findIndexFromId(8));
 
     if (emptySlotIndex >= 0 && emptySlotIndex <= 2) {
-      alert("algorithm mistake at phase ", phase);
+      alert("algorithm mistake at phase " + phase);
+      console.log("algorithm mistake at phase ", phase);
       setPhase("error");
       return null;
     }
@@ -352,7 +371,8 @@ function ComputerGrid() {
     const emptySlotIndex = parseInt(findIndexFromId(8));
 
     if (emptySlotIndex === 2 || emptySlotIndex === 5 || emptySlotIndex === 8) {
-      alert("algorithm mistake at phase ", phase);
+      alert("algorithm mistake at phase " + phase);
+      console.log("algorithm mistake at phase ", phase);
       setPhase("error");
       return null;
     }
@@ -364,7 +384,8 @@ function ComputerGrid() {
     const emptySlotIndex = parseInt(findIndexFromId(8));
 
     if (emptySlotIndex >= 6 && emptySlotIndex <= 8) {
-      alert("algorithm mistake at phase ", phase);
+      alert("algorithm mistake at phase " + phase);
+      console.log("algorithm mistake at phase ", phase);
       setPhase("error");
       return null;
     }
@@ -376,7 +397,8 @@ function ComputerGrid() {
     const emptySlotIndex = parseInt(findIndexFromId(8));
 
     if (emptySlotIndex === 0 || emptySlotIndex === 3 || emptySlotIndex === 6) {
-      alert("algorithm mistake at phase ", phase);
+      alert("algorithm mistake at phase " + phase);
+      console.log("algorithm mistake at phase ", phase);
       setPhase("error");
       return null;
     }
@@ -416,17 +438,23 @@ function ComputerGrid() {
   }
 
   function shuffle() {
+    setGameState("shuffling");
     setAmountOfRandomMoves(0);
     setInstructions([]);
     setPhase(0);
-    setGameState("shuffling");
+  }
+
+  if (globalGameState === "play-computer" && gameState === "start") {
+    shuffle();
+  }
+
+  function refreshPage() {
+    window.location.reload(false);
   }
 
   return (
-    <div className="computer-grid">
-      <div className="shuffle">
-        <button onClick={shuffle}>AI Shuffle</button>
-      </div>
+    <div>
+      <h2>Computer</h2>
       <div className="computer-game">
         <div className="a1">{picArray[0]}</div>
         <div className="a2">{picArray[1]}</div>

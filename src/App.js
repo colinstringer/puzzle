@@ -6,10 +6,10 @@ import ComputerGrid from "./components/ComputerGrid";
 function App() {
   return (
     <div className="App">
-      <div className="player">
+      <div className="player-console">
         <PlayerGrid />
       </div>
-      <div className="computer">
+      <div className="computer-console">
         <ComputerGrid />
       </div>
     </div>

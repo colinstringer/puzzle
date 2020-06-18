@@ -1,14 +1,30 @@
-.player-grid {
+.player {
   display: grid;
-  grid-template-areas: "shuffle game";
-  grid-template-columns: 1fr 3fr;
+  grid-template-areas: "buttons . game";
+  grid-template-columns: 1fr 50px 3fr;
+  grid-template-rows: auto;
 }
 
-.player-grid .shuffle {
-  grid-area: shuffle;
+@media screen and (max-width: 1450px) {
+  .player {
+    grid-template-areas:
+      "buttons"
+      "game";
+    grid-template-columns: 1fr;
+    margin-bottom: 60px;
+  }
+}
+.buttons {
+  grid-area: buttons;
+
+  margin-top: 65px;
 }
 
-.player-grid .shuffle button {
+.player-game {
+  grid-area: game;
+}
+
+.buttons button {
   padding: 20px;
   background-color: #06375c;
   border: 3px black solid;
@@ -22,9 +38,7 @@
   cursor: pointer;
 }
 
-.player-game {
-  grid-area: game;
-
+.player-grid {
   display: grid;
   grid-template-areas:
     "a1 a2 a3 a4"
@@ -38,70 +52,70 @@
   border: 2px white solid;
 }
 
-.player-game img {
+.player img {
   cursor: pointer;
 }
 
-.player-grid .a1 {
+.player .a1 {
   grid-area: a1;
 }
 
-.player-grid .a2 {
+.player .a2 {
   grid-area: a2;
 }
 
-.player-grid .a3 {
+.player .a3 {
   grid-area: a3;
 }
 
-.player-grid .a4 {
+.player .a4 {
   grid-area: a4;
 }
 
-.player-grid .b1 {
+.player .b1 {
   grid-area: b1;
 }
 
-.player-grid .b2 {
+.player .b2 {
   grid-area: b2;
 }
 
-.player-grid .b3 {
+.player .b3 {
   grid-area: b3;
 }
 
-.player-grid .b4 {
+.player .b4 {
   grid-area: b4;
 }
 
-.player-grid .c1 {
+.player .c1 {
   grid-area: c1;
 }
 
-.player-grid .c2 {
+.player .c2 {
   grid-area: c2;
 }
 
-.player-grid .c3 {
+.player .c3 {
   grid-area: c3;
 }
 
-.player-grid .c4 {
+.player .c4 {
   grid-area: c4;
 }
 
-.player-grid .d1 {
+.player .d1 {
   grid-area: d1;
 }
 
-.player-grid .d2 {
+.player .d2 {
   grid-area: d2;
 }
 
-.player-grid .d3 {
+.player .d3 {
   grid-area: d3;
 }
 
-.player-grid .d4 {
+.player .d4 {
   grid-area: d4;
 }

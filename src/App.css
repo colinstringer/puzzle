@@ -1,19 +1,29 @@
+html {
+  background-color: #282c34;
+}
+
 .App {
   display: grid;
-  grid-template-areas: "player computer";
-  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "player-console . computer-console";
+  grid-template-columns: 2fr 200px 2fr;
 
   min-height: 100vh;
-  padding: 100px;
-
-  background-color: #282c34;
+  padding: 100px 50px;
   color: white;
 }
 
-.player {
-  grid-area: player;
+@media screen and (max-width: 1450px) {
+  .App {
+    grid-template-areas:
+      "player-console"
+      "computer-console";
+    grid-template-columns: 1fr;
+  }
+}
+.player-console {
+  grid-area: player-console;
 }
 
-.computer {
-  grid-area: computer;
+.computer-console {
+  grid-area: computer-console;
 }
