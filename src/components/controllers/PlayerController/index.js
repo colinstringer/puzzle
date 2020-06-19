@@ -7,16 +7,31 @@ import PlayerView from "../../views/PlayerView";
 
 function PlayerController() {
   const dispatch = useDispatch();
+  const globalGameState = useSelector(selectGlobalGameState);
 
+  // playerGameStates in chronological order: start, shuffle, playing
+  const [playerGameState, setGameState] = useState("start");
   const [buttonVisibility, setButtonVisibility] = useState("visible");
-  const [gameState, setGameState] = useState("start");
   const [amountOfRandomMoves, setAmountOfRandomMoves] = useState(0);
   const [picArray, setPicArray] = useState([]);
 
-  const globalGameState = useSelector(selectGlobalGameState);
+  // In this puzzle there is a static grid, which I represent with the picArray.
+  // For instance, the element inside picArray[0] is always going to be the picture that is
+  // in the upper left at that moment in time. The picture in that slot can change.
+  // picArray only knows which picture is in which visual location, but doesn't know the original locations.
+  
+  // The original location of each picture is stored inside the <img> id value.
+  // For instance, pic1 is the first picture, and its id is set to 0.
+  // This is all done inside the PlayerView and ComputerView.
+
+  // the 4x4 grid array looks like this if you would visualize it:
+  // 0  1  2  3
+  // 4  5  6  7
+  // 8  9  10 11
+  // 12 13 14 15
 
   const [neighbours, setNeighbours] = useState([
-    [1, 4], // index 0 has the indeces 1 and 4 as neighbours in a 4x4 grid
+    [1, 4], // slot 0 has the indeces 1 and 4 as neighbours, etc.
     [0, 2, 5],
     [1, 3, 6],
     [2, 7],
@@ -35,7 +50,7 @@ function PlayerController() {
   ]);
 
   useEffect(() => {
-    if (gameState === "shuffling") {
+    if (playerGameState === "shuffling") {
       const emptySlotIndex = findIndexFromId(15);
       if (amountOfRandomMoves > 250 && parseInt(emptySlotIndex) === 15) {
         setGameState("playing");
@@ -44,13 +59,13 @@ function PlayerController() {
         setTimeout(moveRandomSlot, 3);
       }
     }
-  }, [amountOfRandomMoves, gameState]);
+  }, [amountOfRandomMoves, playerGameState]);
 
   useEffect(() => {
     if (
       picArray.length === 16 &&
       amountOfRandomMoves <= 0 &&
-      gameState === "playing"
+      playerGameState === "playing"
     ) {
       if (gameIsComplete()) {
         if (globalGameState === "play-computer") {
@@ -62,7 +77,7 @@ function PlayerController() {
   }, [picArray, amountOfRandomMoves]);
 
   function handleClick(event) {
-    if (gameState === "playing") {
+    if (playerGameState === "playing") {
       if (event.target.id !== 15) {
         const clickedSlotIndex = findIndexFromId(parseInt(event.target.id));
         const emptySlotIndex = findIndexFromId(15);

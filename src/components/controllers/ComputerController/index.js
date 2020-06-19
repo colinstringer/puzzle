@@ -5,15 +5,31 @@ import { selectGlobalGameState } from "../../../store/appState/selectors";
 import ComputerView from "../../views/ComputerView";
 
 function ComputerController() {
-  const [gameState, setGameState] = useState("start");
+  const globalGameState = useSelector(selectGlobalGameState);
+
+  // computerGameStates in chronological order: start, shuffle, playing, complete, finished
+  const [computerGameState, setGameState] = useState("start");
   const [amountOfRandomMoves, setAmountOfRandomMoves] = useState(0);
   const [instructions, setInstructions] = useState([]);
   const [phase, setPhase] = useState("0");
+  const [picArray, setPicArray] = useState([]);
 
-  const globalGameState = useSelector(selectGlobalGameState);
+  // In this puzzle there is a static grid, which I represent with the picArray.
+  // For instance, the element inside picArray[0] is always going to be the picture that is
+  // in the upper left at that moment in time. The picture in that slot can change.
+  // picArray only knows which picture is in which visual location, but doesn't know the original locations.
+  
+  // The original location of each picture is stored inside the <img> id value.
+  // For instance, pic1 is the first picture, and its id is set to 0.
+  // This is all done inside the PlayerView and ComputerView.
 
+  // the 3x3 grid array looks like this if you would visualize it:
+  // 0 1 2
+  // 3 4 5
+  // 6 7 8
+  
   const [neighbours, setNeighbours] = useState([
-    [1, 3], // index 0 has the indeces 1 and 3 as neighbours in a 3x3 grid
+    [1, 3], // slot 0 has the indeces 1 and 3 as neighbours, etc.
     [0, 2, 4],
     [1, 5],
     [0, 4, 6],
@@ -24,10 +40,8 @@ function ComputerController() {
     [5, 7],
   ]);
 
-  const [picArray, setPicArray] = useState([]);
-
   useEffect(() => {
-    if (gameState === "shuffling") {
+    if (computerGameState === "shuffling") {
       const emptySlotIndex = findIndexFromId(8);
       if (amountOfRandomMoves > 300 && parseInt(emptySlotIndex) === 8) {
         setGameState("playing");
@@ -37,17 +51,19 @@ function ComputerController() {
         setTimeout(moveRandomSlot, 3);
       }
     }
-  }, [amountOfRandomMoves, gameState]);
+  }, [amountOfRandomMoves, computerGameState]);
 
   useEffect(() => {
-    if (gameState === "complete") {
+    // before finished there's an extra complete state to ensure 1 extra render
+    // that happens, to make the animation a little smoother
+    if (computerGameState === "complete") {
       setGameState("finished");
     }
-    if (gameState === "finished") {
+    if (computerGameState === "finished") {
       alert("The computer wins!!");
       refreshPage();
     }
-  }, [gameState]);
+  }, [computerGameState]);
 
   useEffect(() => {
     if (phase === "error") {
@@ -56,7 +72,7 @@ function ComputerController() {
       setGameState("start");
     }
 
-    if (gameState === "playing")
+    if (computerGameState === "playing")
       if (instructions.length > 0) {
         setTimeout(executeNextInstruction, 800);
       } else {
@@ -116,15 +132,16 @@ function ComputerController() {
       }
   }, [instructions, phase]);
 
+  function shuffle() {
+    setGameState("shuffling");
+    setAmountOfRandomMoves(0);
+    setInstructions([]);
+    setPhase(0);
+  }
+
   // phase 1 ends when the upper left pic is in its original slot
   function phase1a() {
     const picUpperLeft = parseInt(findIndexFromId(0));
-
-    // the array grid positions are as follows:
-    // 0 1 2
-    // 3 4 5
-    // 6 7 8
-    // so picUpperLeft is the picture that has its original position in the 0 slot
 
     if (picUpperLeft === 4) setPhase("1b");
     else if (picUpperLeft === 0) setPhase("2a");
@@ -371,6 +388,16 @@ function ComputerController() {
     swapElementsByIndex(emptySlotIndex, emptySlotIndex - 1);
   }
 
+  function moveRandomSlot() {
+    const emptySlotIndex = findIndexFromId(8);
+    const amountOfNeighbours = neighbours[emptySlotIndex].length;
+    const randomIndex = Math.floor(Math.random() * amountOfNeighbours);
+    const randomNeighbour = neighbours[emptySlotIndex][randomIndex];
+
+    swapElementsByIndex(emptySlotIndex, randomNeighbour);
+    setAmountOfRandomMoves(amountOfRandomMoves + 1);
+  }
+
   function swapElementsByIndex(index1, index2) {
     let array = [...picArray];
     const temp = array[index2];
@@ -392,24 +419,7 @@ function ComputerController() {
     return index;
   }
 
-  function moveRandomSlot() {
-    const emptySlotIndex = findIndexFromId(8);
-    const amountOfNeighbours = neighbours[emptySlotIndex].length;
-    const randomIndex = Math.floor(Math.random() * amountOfNeighbours);
-    const randomNeighbour = neighbours[emptySlotIndex][randomIndex];
-
-    swapElementsByIndex(emptySlotIndex, randomNeighbour);
-    setAmountOfRandomMoves(amountOfRandomMoves + 1);
-  }
-
-  function shuffle() {
-    setGameState("shuffling");
-    setAmountOfRandomMoves(0);
-    setInstructions([]);
-    setPhase(0);
-  }
-
-  if (globalGameState === "play-computer" && gameState === "start") {
+  if (globalGameState === "play-computer" && computerGameState === "start") {
     shuffle();
   }
 
