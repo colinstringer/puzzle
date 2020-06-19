@@ -1,16 +1,16 @@
 import "./App.css";
 import React from "react";
-import PlayerGrid from "./components/PlayerGrid";
-import ComputerGrid from "./components/ComputerGrid";
+import PlayerController from './components/controllers/PlayerController';
+import ComputerController from './components/controllers/ComputerController';
 
 function App() {
   return (
     <div className="App">
       <div className="player-console">
-        <PlayerGrid />
+        <PlayerController />
       </div>
       <div className="computer-console">
-        <ComputerGrid />
+        <ComputerController />
       </div>
     </div>
   );
